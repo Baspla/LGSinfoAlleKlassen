@@ -12,7 +12,10 @@ public class Main {
     private static Log LOG = LogFactory.getLog(Main.class.getName());
 
     public static void main(String[] args) {
-        if(args.length<2||args.length>2)
+        if(args.length<2||args.length>2){
+            System.out.println("KEIN TOKEN/NAME!");
+            return;
+        }
         ApiContextInitializer.init();
 
         TelegramBotsApi botsApi = new TelegramBotsApi();
