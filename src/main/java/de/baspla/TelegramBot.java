@@ -36,7 +36,7 @@ public class TelegramBot extends AbilityBot {
     }
 
 
-    public TelegramBot(String token, String name) {
+    TelegramBot(String token, String name) {
         super(token, name);
         plan = new Plan("https://lgsit.de/plan");
     }
@@ -68,9 +68,7 @@ public class TelegramBot extends AbilityBot {
                 .privacy(PUBLIC)
                 .locality(ALL)
                 .input(0)
-                .action(ctx -> {
-                    sendMessage(ctx.chatId(), "Willkommen zum LGSinfo Bot.\nWähle deine Klasse mit /options aus.\nDieser Bot wird von @TimMorgner entwickelt.");
-                })
+                .action(ctx -> sendMessage(ctx.chatId(), "Willkommen zum LGSinfo Bot.\nWähle deine Klasse mit /options aus.\nDieser Bot wird von @TimMorgner entwickelt."))
                 .build();
     }
 
@@ -81,13 +79,7 @@ public class TelegramBot extends AbilityBot {
                 .privacy(PUBLIC)
                 .locality(ALL)
                 .input(0)
-                .action(ctx -> {
-                    if (ctx.update().getMessage().isUserMessage()) {
-                        sendMessage(ctx.chatId(), "/help - zeigt die Hilfe an\n/plan - zeigt deinen Plan an\n/options - zeigt deine Einstellungen an");
-                    } else {
-                        sendMessage(ctx.chatId(), "/help - zeigt die Hilfe an\n/plan - zeigt euren Plan an\n/klassen - zeigt euch alle Klassen an\n/klasse <i>[Klasse]</i> - wählt die Klasse aus\n/format <i>[1-3]</i> - wählt das Format aus");
-                    }
-                })
+                .action(ctx -> sendMessage(ctx.chatId(), "/help - zeigt die Hilfe an\n/plan - zeigt euren Plan an\n/options - zeigt deine Einstellungen an\n/klassen - zeigt euch alle Klassen an\n/klasse <i>[Klasse]</i> - wählt die Klasse aus\n/format <i>[1-3]</i> - wählt das Format aus"))
                 .build();
     }
 
@@ -99,9 +91,7 @@ public class TelegramBot extends AbilityBot {
                 .privacy(PUBLIC)
                 .locality(ALL)
                 .input(0)
-                .action(ctx -> {
-                    sendOptions(ctx.chatId());
-                })
+                .action(ctx -> sendOptions(ctx.chatId()))
                 .build();
     }
 
@@ -275,10 +265,10 @@ public class TelegramBot extends AbilityBot {
     private InlineKeyboardMarkup generateFormatKeyboard() {
         ArrayList<String> klassen = plan.getKlassen();
         InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> rows = new ArrayList<List<InlineKeyboardButton>>();
-        List<InlineKeyboardButton> row1 = new ArrayList<InlineKeyboardButton>();
-        List<InlineKeyboardButton> row2 = new ArrayList<InlineKeyboardButton>();
-        List<InlineKeyboardButton> row3 = new ArrayList<InlineKeyboardButton>();
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+        List<InlineKeyboardButton> row1 = new ArrayList<>();
+        List<InlineKeyboardButton> row2 = new ArrayList<>();
+        List<InlineKeyboardButton> row3 = new ArrayList<>();
         row1.add(new InlineKeyboardButton("Kurz").setCallbackData("format_short"));
         row2.add(new InlineKeyboardButton("Lang").setCallbackData("format_long"));
         row3.add(new InlineKeyboardButton("Alles").setCallbackData("format_all"));
@@ -291,8 +281,8 @@ public class TelegramBot extends AbilityBot {
 
     private InlineKeyboardMarkup generateOptionsKeyboard() {
         InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> rows = new ArrayList<List<InlineKeyboardButton>>();
-        List<InlineKeyboardButton> row1 = new ArrayList<InlineKeyboardButton>();
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+        List<InlineKeyboardButton> row1 = new ArrayList<>();
         row1.add(new InlineKeyboardButton("Klasse").setCallbackData("klasse_0"));
         row1.add(new InlineKeyboardButton("Format").setCallbackData("formatmenu"));
         rows.add(row1);
@@ -306,6 +296,7 @@ public class TelegramBot extends AbilityBot {
             try {
                 seite = new Integer(context.toLowerCase().substring(7));
             } catch (NumberFormatException e) {
+                e.printStackTrace();
             }
         }
         return seite;
@@ -314,11 +305,11 @@ public class TelegramBot extends AbilityBot {
     private InlineKeyboardMarkup generateKlassenKeyboard(int seite) {
         ArrayList<String> klassen = plan.getKlassen();
         InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> rows = new ArrayList<List<InlineKeyboardButton>>();
-        List<InlineKeyboardButton> row1 = new ArrayList<InlineKeyboardButton>();
-        List<InlineKeyboardButton> row2 = new ArrayList<InlineKeyboardButton>();
-        List<InlineKeyboardButton> row3 = new ArrayList<InlineKeyboardButton>();
-        List<InlineKeyboardButton> row4 = new ArrayList<InlineKeyboardButton>();
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+        List<InlineKeyboardButton> row1 = new ArrayList<>();
+        List<InlineKeyboardButton> row2 = new ArrayList<>();
+        List<InlineKeyboardButton> row3 = new ArrayList<>();
+        List<InlineKeyboardButton> row4 = new ArrayList<>();
         addKlasseToRow(row1, seite, 0, klassen);
         addKlasseToRow(row1, seite, 1, klassen);
         addKlasseToRow(row2, seite, 2, klassen);
@@ -402,9 +393,9 @@ public class TelegramBot extends AbilityBot {
         }
         String msg = "";
         for (int i = 0; i < eintraege.size(); i++) {
-            msg = msg + eintraege.get(i).toString(format) + "\n";
+            msg = msg.concat(eintraege.get(i).toString(format) + "\n");
             if (i % 6 == 0 && i != 0) {
-                msg = "<b>Vertretungsplan Seite " + (((i - (i % 6)) / 6)) + "</b>\n\n" + msg;
+                msg = String.format("<b>Vertretungsplan Seite %d</b>\n\n%s", (i - (i % 6)) / 6, msg);
                 sendSilentMessage(benutzer.getChatId(), msg);
                 msg = "";
             }
