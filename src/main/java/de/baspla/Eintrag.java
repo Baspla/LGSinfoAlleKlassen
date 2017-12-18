@@ -173,7 +173,7 @@ public class Eintrag {
                 break;
             case 3:
                 text = "<b>Kurs:</b> <a href=\"%url%\">%klasse%</a>\n" +
-                        "<b>Datum:</b> <i>%tag%,%datum%</i>\n" +
+                        "<b>Datum:</b> <i>%tag%, %datum%</i>\n" +
                         "<b>Stunde:</b> %stunde%\n" +
                         "<b>Info:</b> %info%\n" +
                         "<b>Art:</b> %art%\n" +
