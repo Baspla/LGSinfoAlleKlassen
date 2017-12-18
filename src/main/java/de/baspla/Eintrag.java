@@ -154,18 +154,20 @@ public class Eintrag {
         String text = "";
         switch (format) {
             case 1:
-                text = "<i>%tag%,%datum% - %stunde% Stunde</i> \n" +
+                text = "<i>%tag%, %datum% - %stunde% Stunde</i> \n" +
                         "<b>Info:</b> %info%\n" +
                         "<b>Art:</b> %art%\n" +
+                        "<b>Lehrer:</b> %lehrer%\n"+
                         "<b>Vertretungs Raum:</b> %vertretungs_raum%\n" +
                         "<b>Vertretungs Lehrer:</b> %vertretungs_lehrer%\n";
                 break;
             case 2:
                 text = "<b>Kurs:</b> <a href=\"%url%\">%klasse%</a>\n" +
-                        "<b>Datum:</b> <i>%tag%,%datum%</i>\n" +
+                        "<b>Datum:</b> <i>%tag%, %datum%</i>\n" +
                         "<b>Stunde:</b> %stunde%\n" +
                         "<b>Info:</b> %info%\n" +
                         "<b>Art:</b> %art%\n" +
+                        "<b>Lehrer:</b> %lehrer%\n"+
                         "<b>Vertretungs Raum:</b> %vertretungs_raum%\n" +
                         "<b>Vertretungs Lehrer:</b> %vertretungs_lehrer%\n";
                 break;
