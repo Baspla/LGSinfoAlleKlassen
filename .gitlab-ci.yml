@@ -9,6 +9,8 @@ build:
    - mvn package -B
 
 deploy:
+  only:
+    - master
   script:
    - mvn clean package -B
    - sshpass -p $password ssh -o StrictHostKeyChecking=no $user@$hostname 'rm -f ~/lgsinfo-1.0.0.jar'
