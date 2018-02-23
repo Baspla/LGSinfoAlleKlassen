@@ -154,21 +154,26 @@ public class LGSInfoBot extends AbilityBot {
                 .locality(USER)
                 .input(0)
                 .action(ctx -> {
-                   if(ctx.arguments().length<=0){
-                       sendMessage(ctx.chatId(),"Gib eine Nachricht an.");
-                       return;
-                   }
+                    if (ctx.arguments().length <= 0) {
+                        sendMessage(ctx.chatId(), "Gib eine Nachricht an.");
+                        return;
+                    }
                     String msg = "";
-                   for(String s: ctx.arguments()){
-                       msg=msg+" "+s;
-                   }
+                    for (String s : ctx.arguments()) {
+                        msg = msg + " " + s;
+                    }
                     Map<Long, Benutzer> benutzerMap = db.getMap("BENUTZER");
-                   for(Map.Entry<Long,Benutzer> entry: benutzerMap.entrySet()){
-                         sendMessage(entry.getKey(),msg);
-                   }
+                    for (Map.Entry<Long, Benutzer> entry : benutzerMap.entrySet()) {
+                        try {
+                            sendMessage(entry.getValue().getChatId(), msg);
+                        }catch (ClassCastException ex){
+                            ex.printStackTrace();
+                        }
+                    }
                 })
                 .build();
     }
+
     public Ability cmdAdminMessage() {
         return Ability.builder()
                 .name("message")
@@ -177,21 +182,21 @@ public class LGSInfoBot extends AbilityBot {
                 .locality(USER)
                 .input(0)
                 .action(ctx -> {
-                    if(ctx.arguments().length<=1){
-                        sendMessage(ctx.chatId(),"Gib eine Nachricht und Nutzer an.");
+                    if (ctx.arguments().length <= 1) {
+                        sendMessage(ctx.chatId(), "Gib eine Nachricht und Nutzer an.");
                         return;
                     }
                     String msg = "";
-                    for(int i=1;i<ctx.arguments().length;i++){
-                        msg=msg+" "+ctx.arguments()[i];
+                    for (int i = 1; i < ctx.arguments().length; i++) {
+                        msg = msg + " " + ctx.arguments()[i];
                     }
                     try {
                         long l = Long.valueOf(ctx.firstArg());
                         sendMessage(l, msg);
-                        sendMessage(ctx.chatId(),"Nachricht gesendet.");
-                    }catch (NumberFormatException e){
+                        sendMessage(ctx.chatId(), "Nachricht gesendet.");
+                    } catch (NumberFormatException e) {
                         e.printStackTrace();
-                        sendMessage(ctx.chatId(),"Diesen Nutzer gibt es nicht.");
+                        sendMessage(ctx.chatId(), "Diesen Nutzer gibt es nicht.");
                     }
                 })
                 .build();
