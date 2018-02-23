@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.function.Consumer;
 
 import static org.telegram.abilitybots.api.objects.Flag.*;
@@ -32,6 +33,7 @@ import static org.telegram.abilitybots.api.objects.Privacy.*;
 public class LGSInfoBot extends AbilityBot {
     private Plan plan;
     private boolean spy = false;
+    private static String[] motivation = {"Heute ist ein prima Tag.", "Du siehst toll aus.","Ich akzeptiere dich voll und ganz so, wie du bist.","Du kannst dich (fast) immer auf mich verlassen.","Ich bin immer für dich da.","Du hast wunderschöne Augen","Du siehst gut aus","Alles wird ok.","Alles wird wieder gut.","Das geht vorbei.","Dein Lächeln ist bezaubernd","Ich mag dich","Füll deine Leere mit Essen.","Wenns dir schlecht geht: Essen."};
 
     public int creatorId() {
         return 67025299;
@@ -150,6 +152,21 @@ public class LGSInfoBot extends AbilityBot {
                 })
                 .build();
     }
+
+    public Ability cmdHappy() {
+        return Ability.builder()
+                .name("Happy")
+                .info("schreibt motivierende Nachrichten")
+                .privacy(PUBLIC)
+                .locality(USER)
+                .input(0)
+                .action(ctx -> {
+                    Random rnd = new Random();
+                    sendMessage(ctx.chatId(), motivation[rnd.nextInt(motivation.length)]);
+                })
+                .build();
+    }
+
 
     public Ability cmdAdminBroadcast() {
         return Ability.builder()
@@ -335,8 +352,9 @@ public class LGSInfoBot extends AbilityBot {
 
     public Reply textmessage() {
         Consumer<Update> action = update -> {
+            System.out.println("@" + update.getMessage().getChat().getUserName() + " | " + update.getMessage().getChat().getFirstName() + ": " + update.getMessage().getText());
             if (spy) {
-                sendMessage(new Long(creatorId()), "@"+update.getMessage().getChat().getUserName() + " | " + update.getMessage().getChat().getFirstName() + ": " + update.getMessage().getText());
+                sendMessage(new Long(creatorId()), "@" + update.getMessage().getChat().getUserName() + " | " + update.getMessage().getChat().getFirstName() + ": " + update.getMessage().getText());
             }
         };
         return Reply.of(action, Flag.TEXT, update -> {
