@@ -1,6 +1,5 @@
-package de.baspla;
+package de.baspla.lgsinfo;
 
-import de.baspla.lgsinfo.LGSInfoBot;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.telegram.telegrambots.ApiContextInitializer;

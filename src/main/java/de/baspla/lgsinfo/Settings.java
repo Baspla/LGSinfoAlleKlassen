@@ -1,4 +1,4 @@
-package de.baspla;
+package de.baspla.lgsinfo;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
