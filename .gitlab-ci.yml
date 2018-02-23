@@ -4,14 +4,11 @@ before_script:
   - apt-get --quiet update --yes
   - apt-get --quiet install openssh-client sshpass --yes
 
-build:
-  script:
-   - mvn clean package -B
-
 deploy:
   only:
     - master
   script:
+   - mvn clean package -B
    - sshpass -p $password ssh -o StrictHostKeyChecking=no $user@$hostname 'rm -f ~/lgsinfo-1.0.0.jar'
    - sshpass -p $password scp -o StrictHostKeyChecking=no target/lgsinfo-1.0.0.jar $user@$hostname:~/.
    - sshpass -p $password ssh -o StrictHostKeyChecking=no $user@$hostname 'sudo ~/reloadplan.sh'
