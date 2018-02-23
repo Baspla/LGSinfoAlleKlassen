@@ -163,8 +163,8 @@ public class LGSInfoBot extends AbilityBot {
                        msg=msg+" "+s;
                    }
                     Map<Long, Benutzer> benutzerMap = db.getMap("BENUTZER");
-                   for(Long l: benutzerMap.keySet()){
-                         sendMessage(l,msg);
+                   for(Map.Entry<Long,Benutzer> entry: benutzerMap.entrySet()){
+                         sendMessage(entry.getKey(),msg);
                    }
                 })
                 .build();
