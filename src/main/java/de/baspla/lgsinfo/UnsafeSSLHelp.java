@@ -60,7 +60,7 @@ public class UnsafeSSLHelp {
         return sc;
     }
 
-    SSLContext createUnsecureSSLContext() {
+    public SSLContext createUnsecureSSLContext() {
         SSLContext sc = null;
         try {
             TrustManager[] trustAllCerts = new TrustManager[] { getPassiveTrustManager() };
@@ -74,7 +74,7 @@ public class UnsafeSSLHelp {
         return sc;
     }
 
-    HostnameVerifier getPassiveHostnameVerifier() {
+    public HostnameVerifier getPassiveHostnameVerifier() {
         return new HostnameVerifier() {
             public boolean verify(String hostname, SSLSession session) {
                 return true;
@@ -82,7 +82,7 @@ public class UnsafeSSLHelp {
         };
     }
 
-    private X509TrustManager getPassiveTrustManager() {
+    public X509TrustManager getPassiveTrustManager() {
         return new X509TrustManager() {
 
             public X509Certificate[] getAcceptedIssuers() {
@@ -97,7 +97,7 @@ public class UnsafeSSLHelp {
         };
     }
 
-    X509HostnameVerifier getPassiveX509HostnameVerifier() {
+    public X509HostnameVerifier getPassiveX509HostnameVerifier() {
         return new X509HostnameVerifier() {
             public boolean verify(String arg0, SSLSession arg1) {
                 return true;

@@ -9,11 +9,11 @@ public class Benutzer implements Serializable {
 
     private static final long serialVersionUID = 133742426913374242L;
     @JsonProperty("klasse")
-    private String klasse;
+    String klasse;
     @JsonProperty("chatId")
-    private long chatId;
+    long chatId;
     @JsonProperty("format")
-    private int format;
+    int format;
 
     @Override
     public String toString() {
@@ -31,26 +31,26 @@ public class Benutzer implements Serializable {
         this.format = format;
     }
 
-    private Benutzer(String klasse, long chatId) {
+    public Benutzer(String klasse, long chatId) {
         this.klasse = klasse;
         this.chatId = chatId;
         format = 2;
     }
 
-    Benutzer(long chatid) {
+    public Benutzer(long chatid) {
         this("", chatid);
     }
 
-    String getKlasse() {
+    public String getKlasse() {
         return klasse;
     }
 
-    Benutzer setKlasse(String klasse) {
+    public Benutzer setKlasse(String klasse) {
         this.klasse = klasse;
         return this;
     }
 
-    long getChatId() {
+    public long getChatId() {
         return chatId;
     }
 
@@ -58,16 +58,17 @@ public class Benutzer implements Serializable {
         this.chatId = chatid;
         return this;
     }
-    int getFormat() {
+
+    public int getFormat() {
         return format;
     }
 
-     Benutzer setFormat(int format) {
+    public Benutzer setFormat(int format) {
         this.format = format;
         return this;
     }
 
-    boolean hasKlasse() {
+    public boolean hasKlasse() {
         return klasse != null && !klasse.isEmpty();
     }
 

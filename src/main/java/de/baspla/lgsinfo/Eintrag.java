@@ -75,7 +75,7 @@ public class Eintrag {
         this.url = url;
     }
 
-    Eintrag(Element element, String url) {
+    public Eintrag(Element element, String url) {
         try {
             datum = element.child(0).text();
             tag = element.child(1).text();
@@ -143,7 +143,7 @@ public class Eintrag {
                 '}';
     }
 
-    String toString(int format) {
+    public String toString(int format) {
         String text = "";
         switch (format) {
             case 1:

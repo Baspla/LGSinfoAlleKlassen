@@ -12,19 +12,18 @@ import org.apache.http.impl.client.cache.CachingHttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-class Plan {
+public class Plan {
     private static CacheConfig cacheConfig;
     private static RequestConfig requestConfig;
     private String BASE_URL;
 
-    Plan(String url) {
+    public Plan(String url) {
         BASE_URL = url;
         cacheConfig = CacheConfig.custom()
                 .setMaxCacheEntries(1000)
@@ -36,7 +35,7 @@ class Plan {
                 .build();
     }
 
-    ArrayList<String> getKlassen() {
+    public ArrayList<String> getKlassen() {
         ArrayList<String> list = new ArrayList<>();
         try {
             Document document;
@@ -46,8 +45,8 @@ class Plan {
                 System.out.println("Keine Elemente");
                 return list;
             }
-            for (Element el: elements) {
-                list.add(el.child(0).text());
+            for (int i = 0; i < elements.size(); i++) {
+                list.add(elements.get(i).child(0).text());
             }
             return list;
         } catch (NullPointerException e) {
@@ -94,7 +93,7 @@ class Plan {
         return "";
     }
 
-    ArrayList<Eintrag> getVetretrungen(String klasse) {
+    public ArrayList<Eintrag> getVetretrungen(String klasse) {
         ArrayList<Eintrag> list = new ArrayList<>();
         try {
             Document document;
