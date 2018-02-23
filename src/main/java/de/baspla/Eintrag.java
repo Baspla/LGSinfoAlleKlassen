@@ -3,7 +3,7 @@ package de.baspla;
 import org.jsoup.nodes.Element;
 
 public class Eintrag {
-    private String datum, tag, klasse, stunde, vertretungs_fach, vertretungs_lehrer, vertretungs_raum, fach, lehrer, info, art, url;
+    private String datum, tag, klasse, stunde, vertretungs_fach, vertretungs_raum, fach, lehrer, info, art, url;
 
     public String getDatum() {
         return datum;
@@ -45,14 +45,6 @@ public class Eintrag {
         this.vertretungs_fach = vertretungs_fach;
     }
 
-    public String getVertretungs_lehrer() {
-        return vertretungs_lehrer;
-    }
-
-    public void setVertretungs_lehrer(String vertretungs_lehrer) {
-        this.vertretungs_lehrer = vertretungs_lehrer;
-    }
-
     public String getVertretungs_raum() {
         return vertretungs_raum;
     }
@@ -69,13 +61,12 @@ public class Eintrag {
         return url;
     }
 
-    public Eintrag(String datum, String tag, String klasse, String stunde, String vertretungs_fach, String vertretungs_lehrer, String vertretungs_raum, String fach, String lehrer, String info, String art, String url) {
+    public Eintrag(String datum, String tag, String klasse, String stunde, String vertretungs_fach, String vertretungs_raum, String fach, String lehrer, String info, String art, String url) {
         this.datum = datum;
         this.tag = tag;
         this.klasse = klasse;
         this.stunde = stunde;
         this.vertretungs_fach = vertretungs_fach;
-        this.vertretungs_lehrer = vertretungs_lehrer;
         this.vertretungs_raum = vertretungs_raum;
         this.fach = fach;
         this.lehrer = lehrer;
@@ -90,12 +81,11 @@ public class Eintrag {
         klasse = element.child(2).text();
         stunde = element.child(3).text();
         vertretungs_fach = element.child(4).text();
-        vertretungs_lehrer = element.child(5).text();
-        vertretungs_raum = element.child(6).text();
-        fach = element.child(7).text();
-        lehrer = element.child(8).text();
-        info = element.child(9).text();
-        art = element.child(10).text();
+        vertretungs_raum = element.child(5).text();
+        fach = element.child(6).text();
+        lehrer = element.child(7).text();
+        info = element.child(8).text();
+        art = element.child(9).text();
         this.url = url;
     }
 
@@ -140,7 +130,6 @@ public class Eintrag {
                 ", klasse='" + klasse + '\'' +
                 ", stunde='" + stunde + '\'' +
                 ", vertretungs_fach='" + vertretungs_fach + '\'' +
-                ", vertretungs_lehrer='" + vertretungs_lehrer + '\'' +
                 ", vertretungs_raum='" + vertretungs_raum + '\'' +
                 ", fach='" + fach + '\'' +
                 ", lehrer='" + lehrer + '\'' +
@@ -158,8 +147,7 @@ public class Eintrag {
                         "<b>Info:</b> %info%\n" +
                         "<b>Art:</b> %art%\n" +
                         "<b>Lehrer:</b> %lehrer%\n"+
-                        "<b>Vertretungs Raum:</b> %vertretungs_raum%\n" +
-                        "<b>Vertretungs Lehrer:</b> %vertretungs_lehrer%\n";
+                        "<b>Vertretungs Raum:</b> %vertretungs_raum%\n";
                 break;
             case 2:
                 text = "<b>Kurs:</b> <a href=\"%url%\">%klasse%</a>\n" +
@@ -168,8 +156,7 @@ public class Eintrag {
                         "<b>Info:</b> %info%\n" +
                         "<b>Art:</b> %art%\n" +
                         "<b>Lehrer:</b> %lehrer%\n"+
-                        "<b>Vertretungs Raum:</b> %vertretungs_raum%\n" +
-                        "<b>Vertretungs Lehrer:</b> %vertretungs_lehrer%\n";
+                        "<b>Vertretungs Raum:</b> %vertretungs_raum%\n";
                 break;
             case 3:
                 text = "<b>Kurs:</b> <a href=\"%url%\">%klasse%</a>\n" +
@@ -180,7 +167,6 @@ public class Eintrag {
                         "<pre>- Vertretung -</pre>\n" +
                         "<b>Fach:</b> %vertretungs_fach%\n" +
                         "<b>Raum:</b> %vertretungs_raum%\n" +
-                        "<b>Lehrer:</b> %vertretungs_lehrer%\n" +
                         "<code>- Eigentlich -</code>\n" +
                         "<b>Fach:</b> %fach%\n" +
                         "<b>Lehrer:</b> %lehrer%\n";
@@ -193,8 +179,7 @@ public class Eintrag {
                 .replace("%klasse%", (klasse == null || klasse.isEmpty()) ? "N/A" : klasse)
                 .replace("%stunde%", (stunde == null || stunde.isEmpty()) ? "N/A" : stunde)
                 .replace("%vertretungs_fach%", (vertretungs_fach == null || vertretungs_fach.isEmpty()) ? "N/A" : vertretungs_fach)
-                .replace("%vertretungs_lehrer%", (vertretungs_lehrer == null || vertretungs_lehrer.isEmpty()) ? "N/A" : vertretungs_lehrer)
-                .replace("%vertretungs_raum%", (vertretungs_raum == null || vertretungs_raum.isEmpty()) ? "N/A" : vertretungs_raum)
+               .replace("%vertretungs_raum%", (vertretungs_raum == null || vertretungs_raum.isEmpty()) ? "N/A" : vertretungs_raum)
                 .replace("%fach%", (fach == null || fach.isEmpty()) ? "N/A" : fach)
                 .replace("%lehrer%", (lehrer == null || lehrer.isEmpty()) ? "N/A" : lehrer)
                 .replace("%info%", (info == null || info.isEmpty()) ? "N/A" : info)
