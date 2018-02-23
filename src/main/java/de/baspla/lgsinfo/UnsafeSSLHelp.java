@@ -1,4 +1,4 @@
-package de.baspla;
+package de.baspla.lgsinfo;
 
 import java.io.IOException;
 import java.security.SecureRandom;
@@ -60,7 +60,7 @@ public class UnsafeSSLHelp {
         return sc;
     }
 
-    public SSLContext createUnsecureSSLContext() {
+    SSLContext createUnsecureSSLContext() {
         SSLContext sc = null;
         try {
             TrustManager[] trustAllCerts = new TrustManager[] { getPassiveTrustManager() };
@@ -74,7 +74,7 @@ public class UnsafeSSLHelp {
         return sc;
     }
 
-    public HostnameVerifier getPassiveHostnameVerifier() {
+    HostnameVerifier getPassiveHostnameVerifier() {
         return new HostnameVerifier() {
             public boolean verify(String hostname, SSLSession session) {
                 return true;
@@ -82,7 +82,7 @@ public class UnsafeSSLHelp {
         };
     }
 
-    public X509TrustManager getPassiveTrustManager() {
+    private X509TrustManager getPassiveTrustManager() {
         return new X509TrustManager() {
 
             public X509Certificate[] getAcceptedIssuers() {
@@ -97,7 +97,7 @@ public class UnsafeSSLHelp {
         };
     }
 
-    public X509HostnameVerifier getPassiveX509HostnameVerifier() {
+    X509HostnameVerifier getPassiveX509HostnameVerifier() {
         return new X509HostnameVerifier() {
             public boolean verify(String arg0, SSLSession arg1) {
                 return true;

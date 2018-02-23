@@ -1,4 +1,4 @@
-package de.baspla;
+package de.baspla.lgsinfo;
 
 import org.jsoup.nodes.Element;
 
@@ -75,17 +75,21 @@ public class Eintrag {
         this.url = url;
     }
 
-    public Eintrag(Element element, String url) {
-        datum = element.child(0).text();
-        tag = element.child(1).text();
-        klasse = element.child(2).text();
-        stunde = element.child(3).text();
-        vertretungs_fach = element.child(4).text();
-        vertretungs_raum = element.child(5).text();
-        fach = element.child(6).text();
-        lehrer = element.child(7).text();
-        info = element.child(8).text();
-        art = element.child(9).text();
+    Eintrag(Element element, String url) {
+        try {
+            datum = element.child(0).text();
+            tag = element.child(1).text();
+            klasse = element.child(2).text();
+            stunde = element.child(3).text();
+            vertretungs_fach = element.child(4).text();
+            vertretungs_raum = element.child(5).text();
+            fach = element.child(6).text();
+            lehrer = element.child(7).text();
+            info = element.child(8).text();
+            art = element.child(9).text();
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
         this.url = url;
     }
 
@@ -139,7 +143,7 @@ public class Eintrag {
                 '}';
     }
 
-    public String toString(int format) {
+    String toString(int format) {
         String text = "";
         switch (format) {
             case 1:

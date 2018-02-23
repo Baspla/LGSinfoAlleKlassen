@@ -1,4 +1,4 @@
-package de.baspla;
+package de.baspla.lgsinfo;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,11 +9,11 @@ public class Benutzer implements Serializable {
 
     private static final long serialVersionUID = 133742426913374242L;
     @JsonProperty("klasse")
-    String klasse;
+    private String klasse;
     @JsonProperty("chatId")
-    long chatId;
+    private long chatId;
     @JsonProperty("format")
-    int format;
+    private int format;
 
     @Override
     public String toString() {
@@ -31,26 +31,26 @@ public class Benutzer implements Serializable {
         this.format = format;
     }
 
-    public Benutzer(String klasse, long chatId) {
+    private Benutzer(String klasse, long chatId) {
         this.klasse = klasse;
         this.chatId = chatId;
         format = 2;
     }
 
-    public Benutzer(long chatid) {
+    Benutzer(long chatid) {
         this("", chatid);
     }
 
-    public String getKlasse() {
+    String getKlasse() {
         return klasse;
     }
 
-    public Benutzer setKlasse(String klasse) {
+    Benutzer setKlasse(String klasse) {
         this.klasse = klasse;
         return this;
     }
 
-    public long getChatId() {
+    long getChatId() {
         return chatId;
     }
 
@@ -58,17 +58,16 @@ public class Benutzer implements Serializable {
         this.chatId = chatid;
         return this;
     }
-
-    public int getFormat() {
+    int getFormat() {
         return format;
     }
 
-    public Benutzer setFormat(int format) {
+     Benutzer setFormat(int format) {
         this.format = format;
         return this;
     }
 
-    public boolean hasKlasse() {
+    boolean hasKlasse() {
         return klasse != null && !klasse.isEmpty();
     }
 

@@ -1,33 +1,30 @@
-package de.baspla;
+package de.baspla.lgsinfo;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.cache.CacheResponseStatus;
 import org.apache.http.client.cache.HttpCacheContext;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.cache.CacheConfig;
 import org.apache.http.impl.client.cache.CachingHttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class Plan {
+class Plan {
     private static CacheConfig cacheConfig;
     private static RequestConfig requestConfig;
     private String BASE_URL;
 
-    public Plan(String url) {
+    Plan(String url) {
         BASE_URL = url;
         cacheConfig = CacheConfig.custom()
                 .setMaxCacheEntries(1000)
@@ -39,7 +36,7 @@ public class Plan {
                 .build();
     }
 
-    public ArrayList<String> getKlassen() {
+    ArrayList<String> getKlassen() {
         ArrayList<String> list = new ArrayList<>();
         try {
             Document document;
@@ -49,8 +46,8 @@ public class Plan {
                 System.out.println("Keine Elemente");
                 return list;
             }
-            for (int i = 0; i < elements.size(); i++) {
-                list.add(elements.get(i).child(0).text());
+            for (Element el: elements) {
+                list.add(el.child(0).text());
             }
             return list;
         } catch (NullPointerException e) {
@@ -97,7 +94,7 @@ public class Plan {
         return "";
     }
 
-    public ArrayList<Eintrag> getVetretrungen(String klasse) {
+    ArrayList<Eintrag> getVetretrungen(String klasse) {
         ArrayList<Eintrag> list = new ArrayList<>();
         try {
             Document document;

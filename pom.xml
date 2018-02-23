@@ -35,7 +35,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>de.baspla.Main</mainClass>
+                                    <mainClass>de.baspla.lgsinfo.Main</mainClass>
                                 </transformer>
                             </transformers>
                             <filters>

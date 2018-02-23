@@ -1,10 +1,10 @@
 package de.baspla;
 
+import de.baspla.lgsinfo.LGSInfoBot;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
-import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 
@@ -12,18 +12,19 @@ public class Main {
     private static Log LOG = LogFactory.getLog(Main.class.getName());
 
     public static void main(String[] args) {
-        if(args.length<2||args.length>2){
-            System.out.println("KEIN TOKEN/NAME!");
-            return;
-        }
         ApiContextInitializer.init();
 
         TelegramBotsApi botsApi = new TelegramBotsApi();
 
+        Settings settings = new Settings();
         try {
-            String token = args[0];
-            String name = args[1];
-            TelegramBot bot = new TelegramBot(token, name);
+            String token = settings.getLGSinfoBottoken();
+            String name = settings.getLGSinfoBotname();
+            if(token.isEmpty()||name.isEmpty()){
+                System.err.println("Kein Name/Token");
+                System.exit(42);
+            }
+            LGSInfoBot bot = new LGSInfoBot(token,name);
             botsApi.registerBot(bot);
         } catch (TelegramApiException e) {
             LOG.error(e);

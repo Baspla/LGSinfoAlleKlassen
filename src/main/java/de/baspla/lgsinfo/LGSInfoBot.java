@@ -1,15 +1,12 @@
-package de.baspla;
+package de.baspla.lgsinfo;
 
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
-import org.telegram.abilitybots.api.objects.Locality;
 import org.telegram.abilitybots.api.objects.Reply;
 import org.telegram.telegrambots.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.api.methods.BotApiMethod;
-import org.telegram.telegrambots.api.methods.groupadministration.GetChatAdministrators;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.api.objects.ChatMember;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -28,7 +25,7 @@ import static org.telegram.abilitybots.api.objects.Flag.*;
 import static org.telegram.abilitybots.api.objects.Locality.*;
 import static org.telegram.abilitybots.api.objects.Privacy.*;
 
-public class TelegramBot extends AbilityBot {
+public class LGSInfoBot extends AbilityBot {
     private Plan plan;
 
     public int creatorId() {
@@ -36,7 +33,7 @@ public class TelegramBot extends AbilityBot {
     }
 
 
-    TelegramBot(String token, String name) {
+    public LGSInfoBot(String token, String name) {
         super(token, name);
         plan = new Plan("https://lgsit.de/plan");
     }
@@ -144,6 +141,57 @@ public class TelegramBot extends AbilityBot {
                         sendMessage(ctx.chatId(), "Alle Vertretungen werden jetzt im Format " + ctx.firstArg() + " gesendet");
                     } else {
                         sendMessage(ctx.chatId(), "Dieses Format gibt es nicht.");
+                    }
+                })
+                .build();
+    }
+
+    public Ability cmdAdminBroadcast() {
+        return Ability.builder()
+                .name("broadcast")
+                .info("Broadcast an Alle")
+                .privacy(ADMIN)
+                .locality(USER)
+                .input(0)
+                .action(ctx -> {
+                   if(ctx.arguments().length<=0){
+                       sendMessage(ctx.chatId(),"Gib eine Nachricht an.");
+                       return;
+                   }
+                    String msg = "";
+                   for(String s: ctx.arguments()){
+                       msg=msg+" "+s;
+                   }
+                    Map<Long, Benutzer> benutzerMap = db.getMap("BENUTZER");
+                   for(Long l: benutzerMap.keySet()){
+                         sendMessage(l,msg);
+                   }
+                })
+                .build();
+    }
+    public Ability cmdAdminMessage() {
+        return Ability.builder()
+                .name("message")
+                .info("Nachricht an Nutzer")
+                .privacy(ADMIN)
+                .locality(USER)
+                .input(0)
+                .action(ctx -> {
+                    if(ctx.arguments().length<=1){
+                        sendMessage(ctx.chatId(),"Gib eine Nachricht und Nutzer an.");
+                        return;
+                    }
+                    String msg = "";
+                    for(int i=1;i<ctx.arguments().length;i++){
+                        msg=msg+" "+ctx.arguments()[i];
+                    }
+                    try {
+                        long l = Long.valueOf(ctx.firstArg());
+                        sendMessage(l, msg);
+                        sendMessage(ctx.chatId(),"Nachricht gesendet.");
+                    }catch (NumberFormatException e){
+                        e.printStackTrace();
+                        sendMessage(ctx.chatId(),"Diesen Nutzer gibt es nicht.");
                     }
                 })
                 .build();
