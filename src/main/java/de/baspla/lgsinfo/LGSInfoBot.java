@@ -1,7 +1,10 @@
 package de.baspla.lgsinfo;
 
+import com.sun.org.apache.regexp.internal.RE;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
+import org.telegram.abilitybots.api.objects.Flag;
+import org.telegram.abilitybots.api.objects.Privacy;
 import org.telegram.abilitybots.api.objects.Reply;
 import org.telegram.telegrambots.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.api.methods.BotApiMethod;
@@ -20,6 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static org.telegram.abilitybots.api.objects.Flag.*;
 import static org.telegram.abilitybots.api.objects.Locality.*;
@@ -27,6 +31,7 @@ import static org.telegram.abilitybots.api.objects.Privacy.*;
 
 public class LGSInfoBot extends AbilityBot {
     private Plan plan;
+    private boolean spy = false;
 
     public int creatorId() {
         return 67025299;
@@ -166,7 +171,7 @@ public class LGSInfoBot extends AbilityBot {
                     for (Map.Entry<Long, Benutzer> entry : benutzerMap.entrySet()) {
                         try {
                             sendMessage(entry.getValue().getChatId(), msg);
-                        }catch (ClassCastException ex){
+                        } catch (ClassCastException ex) {
                             ex.printStackTrace();
                         }
                     }
@@ -198,6 +203,20 @@ public class LGSInfoBot extends AbilityBot {
                         e.printStackTrace();
                         sendMessage(ctx.chatId(), "Diesen Nutzer gibt es nicht.");
                     }
+                })
+                .build();
+    }
+
+    public Ability cmdAdminSpy() {
+        return Ability.builder()
+                .name("spy")
+                .info("Einhoerner und Regenboegen")
+                .privacy(ADMIN)
+                .locality(USER)
+                .input(0)
+                .action(ctx -> {
+                    spy = !spy;
+                    sendMessage(ctx.chatId(), "Spy-Mode " + ((!spy) ? "in" : "") + "aktiv.");
                 })
                 .build();
     }
@@ -312,6 +331,17 @@ public class LGSInfoBot extends AbilityBot {
                 e.printStackTrace();
             }
         }, CALLBACK_QUERY);
+    }
+
+    public Reply textmessage() {
+        Consumer<Update> action = update -> {
+            if (spy) {
+                sendMessage(new Long(creatorId()), "@"+update.getMessage().getChat().getUserName() + " | " + update.getMessage().getChat().getFirstName() + ": " + update.getMessage().getText());
+            }
+        };
+        return Reply.of(action, Flag.TEXT, update -> {
+            return !update.getMessage().isCommand();
+        });
     }
 
 
