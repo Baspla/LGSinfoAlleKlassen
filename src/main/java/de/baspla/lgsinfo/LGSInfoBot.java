@@ -467,16 +467,20 @@ public class LGSInfoBot extends AbilityBot {
             return;
         }
         String msg = "";
-        System.out.println("Plan existiert ("+eintraege.size()+")");
+        System.out.println("Plan existiert");
+        int seite = 1;
         for (int i = 0; i < eintraege.size(); i++) {
             msg = msg.concat(eintraege.get(i).toString(format) + "\n");
-            System.out.println("!!!!"+msg);
             if (i % 6 == 0 && i != 0) {
-                msg = String.format("<b>Vertretungsplan Seite %d</b>\n\n%s", (i - (i % 6)) / 6, msg);
-                System.out.println("?????SENDING!!!!!");
+                msg = "<b>Vertretungsplan Seite "+seite+"</b>\n\n"+msg;
                 sendSilentMessage(benutzer.getChatId(), msg);
+                seite++;
                 msg = "";
             }
+        }
+        if(!msg.isEmpty()){
+            msg = "<b>Vertretungsplan Seite "+seite+"</b>\n\n"+msg;
+            sendSilentMessage(benutzer.getChatId(), msg);
         }
 
     }
