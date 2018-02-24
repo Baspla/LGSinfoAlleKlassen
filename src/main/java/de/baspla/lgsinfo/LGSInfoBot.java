@@ -46,7 +46,12 @@ public class LGSInfoBot extends AbilityBot {
 
 
     private void sendSilentMessage(long chatId, String s) {
+        try {
+        System.out.println("Sending: "+chatId+" '"+s+"'");
         silent.execute(new SendMessage(chatId, s).enableHtml(true));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void sendMessage(Long l, String s) {
