@@ -46,12 +46,7 @@ public class LGSInfoBot extends AbilityBot {
 
 
     private void sendSilentMessage(long chatId, String s) {
-        try {
-        System.out.println("Sending: "+chatId+" '"+s+"'");
         silent.execute(new SendMessage(chatId, s).enableHtml(true));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void sendMessage(Long l, String s) {
@@ -475,8 +470,10 @@ public class LGSInfoBot extends AbilityBot {
         System.out.println("Plan existiert ("+eintraege.size()+")");
         for (int i = 0; i < eintraege.size(); i++) {
             msg = msg.concat(eintraege.get(i).toString(format) + "\n");
+            System.out.println("!!!!"+msg);
             if (i % 6 == 0 && i != 0) {
                 msg = String.format("<b>Vertretungsplan Seite %d</b>\n\n%s", (i - (i % 6)) / 6, msg);
+                System.out.println("?????SENDING!!!!!");
                 sendSilentMessage(benutzer.getChatId(), msg);
                 msg = "";
             }
