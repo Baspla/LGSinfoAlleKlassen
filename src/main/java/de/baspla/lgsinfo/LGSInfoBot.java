@@ -32,7 +32,6 @@ import static org.telegram.abilitybots.api.objects.Privacy.*;
 
 public class LGSInfoBot extends AbilityBot {
     private Plan plan;
-    private boolean spy = false;
     private static String[] motivation = {"Heute ist ein prima Tag.", "Du siehst toll aus.","Ich akzeptiere dich voll und ganz so, wie du bist.","Du kannst dich (fast) immer auf mich verlassen.","Ich bin immer für dich da.","Du hast wunderschöne Augen","Du siehst gut aus","Alles wird ok.","Alles wird wieder gut.","Das geht vorbei.","Dein Lächeln ist bezaubernd","Ich mag dich","Füll deine Leere mit Essen.","Wenns dir schlecht geht: Essen."};
 
     public int creatorId() {
@@ -224,19 +223,6 @@ public class LGSInfoBot extends AbilityBot {
                 .build();
     }
 
-    public Ability cmdAdminSpy() {
-        return Ability.builder()
-                .name("spy")
-                .info("Einhoerner und Regenboegen")
-                .privacy(ADMIN)
-                .locality(USER)
-                .input(0)
-                .action(ctx -> {
-                    spy = !spy;
-                    sendMessage(ctx.chatId(), "Spy-Mode " + ((!spy) ? "in" : "") + "aktiv.");
-                })
-                .build();
-    }
 
     private void sendEditOptions(Long chatId, Integer messageId) {
         generateOptionsKeyboard();
@@ -350,19 +336,6 @@ public class LGSInfoBot extends AbilityBot {
         }, CALLBACK_QUERY);
     }
 
-    public Reply textmessage() {
-        Consumer<Update> action = update -> {
-            System.out.println("@" + update.getMessage().getChat().getUserName() + " | " + update.getMessage().getChat().getFirstName() + ": " + update.getMessage().getText());
-            if (spy) {
-                sendMessage(new Long(creatorId()), "@" + update.getMessage().getChat().getUserName() + " | " + update.getMessage().getChat().getFirstName() + ": " + update.getMessage().getText());
-            }
-        };
-        return Reply.of(action, Flag.TEXT, update -> {
-            return !update.getMessage().isCommand();
-        });
-    }
-
-
     private InlineKeyboardMarkup generateFormatKeyboard() {
         ArrayList<String> klassen = plan.getKlassen();
         InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
@@ -475,6 +448,7 @@ public class LGSInfoBot extends AbilityBot {
 
     private void sendPlan(Benutzer benutzer) {
         int format = benutzer.getFormat();
+        System.out.println("Plan fuer Benutzer: "+benutzer.getChatId());
         if (benutzer.getKlasse() == null || benutzer.getKlasse().isEmpty()) {
             sendMessage(benutzer.getChatId(), "Bitte gib deine Klasse mit /options an.");
             return;
@@ -493,6 +467,7 @@ public class LGSInfoBot extends AbilityBot {
             return;
         }
         String msg = "";
+        System.out.println("Plan existiert ("+eintraege.size()+")");
         for (int i = 0; i < eintraege.size(); i++) {
             msg = msg.concat(eintraege.get(i).toString(format) + "\n");
             if (i % 6 == 0 && i != 0) {
