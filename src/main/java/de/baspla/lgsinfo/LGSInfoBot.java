@@ -109,7 +109,7 @@ public class LGSInfoBot extends AbilityBot {
                 .privacy(PUBLIC)
                 .locality(ALL)
                 .input(0)
-                .action(ctx -> sendMessage(ctx.chatId(), "/help - zeigt die Hilfe an\n/plan - zeigt euren Plan an\n/options - zeigt deine Einstellungen an\n/klassen - zeigt euch alle Klassen an\n/klasse <i>[Klasse]</i> - wählt die Klasse aus\n/format <i>[1-3]</i> - wählt das Format aus"))
+                .action(ctx -> sendMessage(ctx.chatId(), "/help - zeigt die Hilfe an\n/plan - zeigt euren Plan an\n/notify - ändert deine Benachrichtigungs-Einstellungen\n/options - zeigt deine Einstellungen an\n/klassen - zeigt euch alle Klassen an\n/klasse <i>[Klasse]</i> - wählt die Klasse aus\n/format <i>[1-3]</i> - wählt das Format aus\n/happy - schreibt motivierende Nachrichten"))
                 .build();
     }
 
