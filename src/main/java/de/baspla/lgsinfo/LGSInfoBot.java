@@ -59,18 +59,15 @@ public class LGSInfoBot extends AbilityBot {
                     if (benutzer.letzte != null) {
                         for (Eintrag eintrag : eintraege) {
                             for (Eintrag s : benutzer.letzte) {
-                                if (s.toString() == eintraege.toString()) {
+                                if (s.toString().equalsIgnoreCase(eintraege.toString())) {
                                     out.add(eintrag);
                                     break;
                                 }
                             }
-
                         }
-                    } else {
-                        out.addAll(eintraege);
+                        msgPlan(out, benutzer.getFormat(), benutzer);
                     }
                     benutzer.letzte = eintraege;
-                    msgPlan(out, benutzer.getFormat(), benutzer);
                 }
             }
         };
