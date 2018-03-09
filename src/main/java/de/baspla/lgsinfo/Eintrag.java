@@ -168,12 +168,12 @@ public class Eintrag {
                         "<b>Stunde:</b> %stunde%\n" +
                         "<b>Info:</b> %info%\n" +
                         "<b>Art:</b> %art%\n" +
+                        "<b>Lehrer:</b> %lehrer%\n"+
                         "<pre>- Vertretung -</pre>\n" +
                         "<b>Fach:</b> %vertretungs_fach%\n" +
                         "<b>Raum:</b> %vertretungs_raum%\n" +
                         "<code>- Eigentlich -</code>\n" +
-                        "<b>Fach:</b> %fach%\n" +
-                        "<b>Lehrer:</b> %lehrer%\n";
+                        "<b>Fach:</b> %fach%\n";
                 break;
             default:
                 return "Unbekanntes Format";
@@ -189,5 +189,43 @@ public class Eintrag {
                 .replace("%info%", (info == null || info.isEmpty()) ? "N/A" : info)
                 .replace("%art%", (art == null || art.isEmpty()) ? "N/A" : art)
                 .replace("%url%", (url == null || url.isEmpty()) ? "N/A" : url);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Eintrag eintrag = (Eintrag) o;
+
+        if (datum != null ? !datum.equals(eintrag.datum) : eintrag.datum != null) return false;
+        if (tag != null ? !tag.equals(eintrag.tag) : eintrag.tag != null) return false;
+        if (klasse != null ? !klasse.equals(eintrag.klasse) : eintrag.klasse != null) return false;
+        if (stunde != null ? !stunde.equals(eintrag.stunde) : eintrag.stunde != null) return false;
+        if (vertretungs_fach != null ? !vertretungs_fach.equals(eintrag.vertretungs_fach) : eintrag.vertretungs_fach != null)
+            return false;
+        if (vertretungs_raum != null ? !vertretungs_raum.equals(eintrag.vertretungs_raum) : eintrag.vertretungs_raum != null)
+            return false;
+        if (fach != null ? !fach.equals(eintrag.fach) : eintrag.fach != null) return false;
+        if (lehrer != null ? !lehrer.equals(eintrag.lehrer) : eintrag.lehrer != null) return false;
+        if (info != null ? !info.equals(eintrag.info) : eintrag.info != null) return false;
+        if (art != null ? !art.equals(eintrag.art) : eintrag.art != null) return false;
+        return url != null ? url.equals(eintrag.url) : eintrag.url == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = datum != null ? datum.hashCode() : 0;
+        result = 31 * result + (tag != null ? tag.hashCode() : 0);
+        result = 31 * result + (klasse != null ? klasse.hashCode() : 0);
+        result = 31 * result + (stunde != null ? stunde.hashCode() : 0);
+        result = 31 * result + (vertretungs_fach != null ? vertretungs_fach.hashCode() : 0);
+        result = 31 * result + (vertretungs_raum != null ? vertretungs_raum.hashCode() : 0);
+        result = 31 * result + (fach != null ? fach.hashCode() : 0);
+        result = 31 * result + (lehrer != null ? lehrer.hashCode() : 0);
+        result = 31 * result + (info != null ? info.hashCode() : 0);
+        result = 31 * result + (art != null ? art.hashCode() : 0);
+        result = 31 * result + (url != null ? url.hashCode() : 0);
+        return result;
     }
 }

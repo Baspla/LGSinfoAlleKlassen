@@ -1,6 +1,10 @@
 package de.baspla.lgsinfo;
 
 import com.sun.org.apache.regexp.internal.RE;
+import com.vdurmont.emoji.Emoji;
+import com.vdurmont.emoji.EmojiLoader;
+import com.vdurmont.emoji.EmojiManager;
+import com.vdurmont.emoji.EmojiParser;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
 import org.telegram.abilitybots.api.objects.Flag;
@@ -24,6 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import static org.telegram.abilitybots.api.objects.Flag.*;
@@ -32,7 +40,7 @@ import static org.telegram.abilitybots.api.objects.Privacy.*;
 
 public class LGSInfoBot extends AbilityBot {
     private Plan plan;
-    private static String[] motivation = {"Heute ist ein prima Tag.", "Du siehst toll aus.","Ich akzeptiere dich voll und ganz so, wie du bist.","Du kannst dich (fast) immer auf mich verlassen.","Ich bin immer für dich da.","Du hast wunderschöne Augen","Du siehst gut aus","Alles wird ok.","Alles wird wieder gut.","Das geht vorbei.","Dein Lächeln ist bezaubernd","Ich mag dich","Füll deine Leere mit Essen.","Wenns dir schlecht geht: Essen."};
+    private static String[] motivation = {"Heute ist ein prima Tag.", "Du siehst toll aus.", "Ich akzeptiere dich voll und ganz so, wie du bist.", "Du kannst dich (fast) immer auf mich verlassen.", "Ich bin immer für dich da.", "Du hast wunderschöne Augen", "Du siehst gut aus", "Alles wird ok.", "Alles wird wieder gut.", "Das geht vorbei.", "Dein Lächeln ist bezaubernd", "Ich mag dich", "Füll deine Leere mit Essen.", "Wenns dir schlecht geht: Essen."};
 
     public int creatorId() {
         return 67025299;
@@ -42,6 +50,25 @@ public class LGSInfoBot extends AbilityBot {
     public LGSInfoBot(String token, String name) {
         super(token, name);
         plan = new Plan("https://lgsit.de/plan");
+        ScheduledExecutorService notifyService = Executors.newSingleThreadScheduledExecutor();
+        Runnable notifyRunnable = () -> {
+            Map<Long, Benutzer> benutzerMap = db.getMap("BENUTZER");
+            for (Map.Entry<Long, Benutzer> entry : benutzerMap.entrySet()) {
+                Benutzer benutzer = entry.getValue();
+                if (benutzer.notify) {
+                    ArrayList<Eintrag> out = new ArrayList<>();
+                    ArrayList<Eintrag> eintraege = plan.getVetretrungen(benutzer.getKlasse());
+                    for (Eintrag eintrag : eintraege) {
+                        if (!benutzer.letzte.contains(eintrag)) {
+                            out.add(eintrag);
+                        }
+                    }
+                    benutzer.letzte = eintraege;
+                    msgPlan(out, benutzer.getFormat(), benutzer);
+                }
+            }
+        };
+        notifyService.scheduleAtFixedRate(notifyRunnable, 30, 30, TimeUnit.MINUTES);
     }
 
 
@@ -97,6 +124,18 @@ public class LGSInfoBot extends AbilityBot {
                 .action(ctx -> sendOptions(ctx.chatId()))
                 .build();
     }
+
+    public Ability cmdNotify() {
+        return Ability.builder()
+                .name("notify")
+                .info("ändert deine Benachrichtigungs-Einstellungen")
+                .privacy(PUBLIC)
+                .locality(ALL)
+                .input(0)
+                .action(ctx -> sendNotify(ctx.chatId()))
+                .build();
+    }
+
 
     public Ability cmdKlasse() {
         return Ability.builder()
@@ -154,7 +193,7 @@ public class LGSInfoBot extends AbilityBot {
 
     public Ability cmdHappy() {
         return Ability.builder()
-                .name("Happy")
+                .name("happy")
                 .info("schreibt motivierende Nachrichten")
                 .privacy(PUBLIC)
                 .locality(USER)
@@ -225,12 +264,12 @@ public class LGSInfoBot extends AbilityBot {
 
 
     private void sendEditOptions(Long chatId, Integer messageId) {
-        generateOptionsKeyboard();
+        generateOptionsKeyboard(chatId);
         try {
             sender.execute(new EditMessageText()
                     .setChatId(chatId)
                     .setMessageId(messageId)
-                    .setReplyMarkup(generateOptionsKeyboard())
+                    .setReplyMarkup(generateOptionsKeyboard(chatId))
                     .setText(getOptionsMessage(chatId))
             );
         } catch (TelegramApiException e) {
@@ -240,7 +279,13 @@ public class LGSInfoBot extends AbilityBot {
 
 
     private void sendOptions(Long chatId) {
-        sendKeyboardMessage(chatId, getOptionsMessage(chatId), generateOptionsKeyboard());
+        sendKeyboardMessage(chatId, getOptionsMessage(chatId), generateOptionsKeyboard(chatId));
+    }
+
+    private void sendNotify(Long chatId) {
+        Benutzer benutzer = getBenutzer(chatId);
+        sendMessage(chatId, "Du wirst ab sofort " + ((benutzer.changeNotify()) ? "" : "nicht mehr ") + "benachrichtigt.");
+        setBenutzer(benutzer.chatId, benutzer);
     }
 
     private String getOptionsMessage(Long chatId) {
@@ -278,6 +323,11 @@ public class LGSInfoBot extends AbilityBot {
                 } else {
                     answerCallbackQuery.setText("Diese Klasse gibt es nicht.");
                 }
+            } else if (data.startsWith("notify")) {
+                Benutzer benutzer = getBenutzer(message.getChatId());
+                answerCallbackQuery.setText("Du wirst ab sofort " + ((benutzer.changeNotify()) ? "" : "nicht mehr ") + "benachrichtigt.");
+                setBenutzer(benutzer.chatId, benutzer);
+                sendEditOptions(message.getChatId(), message.getMessageId());
             } else if (data.startsWith("formatmenu")) {
                 try {
                     sender.executeAsync(new EditMessageText()
@@ -353,13 +403,16 @@ public class LGSInfoBot extends AbilityBot {
         return keyboard;
     }
 
-    private InlineKeyboardMarkup generateOptionsKeyboard() {
+    private InlineKeyboardMarkup generateOptionsKeyboard(long chatId) {
         InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         List<InlineKeyboardButton> row1 = new ArrayList<>();
+        List<InlineKeyboardButton> row2 = new ArrayList<>();
         row1.add(new InlineKeyboardButton("Klasse").setCallbackData("klasse_0"));
         row1.add(new InlineKeyboardButton("Format").setCallbackData("formatmenu"));
         rows.add(row1);
+        row2.add(new InlineKeyboardButton("Benachrichtigungen " + EmojiManager.getForAlias(getBenutzer(chatId).notify ? ":heavy_check_mark:" : ":x:").getUnicode()).setCallbackData("notify"));
+        rows.add(row2);
         keyboard.setKeyboard(rows);
         return keyboard;
     }
@@ -448,7 +501,7 @@ public class LGSInfoBot extends AbilityBot {
 
     private void sendPlan(Benutzer benutzer) {
         int format = benutzer.getFormat();
-        System.out.println("Plan fuer Benutzer: "+benutzer.getChatId());
+        System.out.println("Plan fuer Benutzer: " + benutzer.getChatId());
         if (benutzer.getKlasse() == null || benutzer.getKlasse().isEmpty()) {
             sendMessage(benutzer.getChatId(), "Bitte gib deine Klasse mit /options an.");
             return;
@@ -466,23 +519,27 @@ public class LGSInfoBot extends AbilityBot {
             sendMessage(benutzer.getChatId(), "Aktuell gibt es keine Vertretungen für dich.");
             return;
         }
-        String msg = "";
         System.out.println("Plan existiert");
+        msgPlan(eintraege, format, benutzer);
+        benutzer.letzte = eintraege;
+    }
+
+    private void msgPlan(ArrayList<Eintrag> eintraege, int format, Benutzer benutzer) {
+        String msg = "";
         int seite = 1;
         for (int i = 0; i < eintraege.size(); i++) {
             msg = msg.concat(eintraege.get(i).toString(format) + "\n");
             if (i % 6 == 0 && i != 0) {
-                msg = "<b>Vertretungsplan Seite "+seite+"</b>\n\n"+msg;
+                msg = "<b>Vertretungsplan Seite " + seite + "</b>\n\n" + msg;
                 sendSilentMessage(benutzer.getChatId(), msg);
                 seite++;
                 msg = "";
             }
         }
-        if(!msg.isEmpty()){
-            msg = "<b>Vertretungsplan Seite "+seite+"</b>\n\n"+msg;
+        if (!msg.isEmpty()) {
+            msg = "<b>Vertretungsplan Seite " + seite + "</b>\n\n" + msg;
             sendSilentMessage(benutzer.getChatId(), msg);
         }
-
     }
 
 
