@@ -58,9 +58,13 @@ public class LGSInfoBot extends AbilityBot {
                     ArrayList<Eintrag> eintraege = plan.getVetretrungen(benutzer.getKlasse());
                     if (benutzer.letzte != null) {
                         for (Eintrag eintrag : eintraege) {
-                            if (!benutzer.letzte.contains(eintrag)) {
-                                out.add(eintrag);
+                            for (Eintrag s : benutzer.letzte) {
+                                if (s.toString() == eintraege.toString()) {
+                                    out.add(eintrag);
+                                    break;
+                                }
                             }
+
                         }
                     } else {
                         out.addAll(eintraege);
@@ -70,7 +74,7 @@ public class LGSInfoBot extends AbilityBot {
                 }
             }
         };
-        future = notifyService.scheduleAtFixedRate(notifyRunnable, 30, 30, TimeUnit.MINUTES);
+        future = notifyService.scheduleAtFixedRate(notifyRunnable, 5, 30, TimeUnit.MINUTES);
     }
 
 
