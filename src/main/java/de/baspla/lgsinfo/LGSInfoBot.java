@@ -28,10 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 
 import static org.telegram.abilitybots.api.objects.Flag.*;
@@ -39,6 +36,7 @@ import static org.telegram.abilitybots.api.objects.Locality.*;
 import static org.telegram.abilitybots.api.objects.Privacy.*;
 
 public class LGSInfoBot extends AbilityBot {
+    private final ScheduledFuture<?> future;
     private Plan plan;
     private static String[] motivation = {"Heute ist ein prima Tag.", "Du siehst toll aus.", "Ich akzeptiere dich voll und ganz so, wie du bist.", "Du kannst dich (fast) immer auf mich verlassen.", "Ich bin immer für dich da.", "Du hast wunderschöne Augen", "Du siehst gut aus", "Alles wird ok.", "Alles wird wieder gut.", "Das geht vorbei.", "Dein Lächeln ist bezaubernd", "Ich mag dich", "Füll deine Leere mit Essen.", "Wenns dir schlecht geht: Essen."};
 
@@ -58,17 +56,21 @@ public class LGSInfoBot extends AbilityBot {
                 if (benutzer.notify) {
                     ArrayList<Eintrag> out = new ArrayList<>();
                     ArrayList<Eintrag> eintraege = plan.getVetretrungen(benutzer.getKlasse());
-                    for (Eintrag eintrag : eintraege) {
-                        if (!benutzer.letzte.contains(eintrag)) {
-                            out.add(eintrag);
+                    if (benutzer.letzte != null) {
+                        for (Eintrag eintrag : eintraege) {
+                            if (!benutzer.letzte.contains(eintrag)) {
+                                out.add(eintrag);
+                            }
                         }
+                    } else {
+                        out.addAll(eintraege);
                     }
                     benutzer.letzte = eintraege;
                     msgPlan(out, benutzer.getFormat(), benutzer);
                 }
             }
         };
-        notifyService.scheduleAtFixedRate(notifyRunnable, 30, 30, TimeUnit.MINUTES);
+        future = notifyService.scheduleAtFixedRate(notifyRunnable, 30, 30, TimeUnit.MINUTES);
     }
 
 
@@ -113,6 +115,16 @@ public class LGSInfoBot extends AbilityBot {
                 .build();
     }
 
+    public Ability cmdTime() {
+        return Ability.builder()
+                .name("time")
+                .info("zeigt die verbleibende Zeit an")
+                .privacy(ADMIN)
+                .locality(ALL)
+                .input(0)
+                .action(ctx -> sendMessage(ctx.chatId(), "Noch " + future.getDelay(TimeUnit.MINUTES) + " Minuten."))
+                .build();
+    }
 
     public Ability cmdOptions() {
         return Ability.builder()
